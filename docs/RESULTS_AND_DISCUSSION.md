@@ -86,14 +86,14 @@ Review completed in 45.2s (total: 48.1s)
 Agents run: SA-SYN, SA-PERF, SA-SEM, SA-FFI
 Total findings: 6
 
-🚨 Critical: 1
-⚠️  High: 2
-⚠️  FFI RISK: Rust unsafe patterns detected!
+ Critical: 1
+  High: 2
+  FFI RISK: Rust unsafe patterns detected!
 
 ================================================================================
 ```
 
-> **📸 Screenshot Placeholder:** _Capture terminal output of the above command and save as `docs/screenshots/pr_15847_verbose.png`_
+> ** Screenshot Placeholder:** _Capture terminal output of the above command and save as `docs/screenshots/pr_15847_verbose.png`_
 
 ### 2.2 PR #12113 — Transpiler PR
 
@@ -109,7 +109,7 @@ python main.py --pr "https://github.com/Qiskit/qiskit/pull/12113" --verbose
 - SA-SEM runs quantum fidelity probes (bell_transpile, controlled_subgate, qft_round_trip)
 - Findings generated for syntax and performance
 
-> **📸 Screenshot Placeholder:** _Capture terminal output and save as `docs/screenshots/pr_12113_verbose.png`_
+> ** Screenshot Placeholder:** _Capture terminal output and save as `docs/screenshots/pr_12113_verbose.png`_
 
 ### 2.3 Issue Analysis — #15870
 
@@ -131,7 +131,7 @@ Title: <Issue Title>
 Analysis completed in 12.3s
 Total fixes generated: 2
 
-💡 SEMANTIC FIX: <Fix Title>
+ SEMANTIC FIX: <Fix Title>
    Target File: qiskit/some/module.py
    Reasoning: <Explanation>
 
@@ -140,7 +140,7 @@ Total fixes generated: 2
    --------------------------
 ```
 
-> **📸 Screenshot Placeholder:** _Capture terminal output and save as `docs/screenshots/issue_15870_analysis.png`_
+> ** Screenshot Placeholder:** _Capture terminal output and save as `docs/screenshots/issue_15870_analysis.png`_
 
 ---
 
@@ -175,7 +175,7 @@ Total fixes generated: 2
 | **Large transpiler PR** | 60–90 | Context: 30s, Agents: 30–60s (includes probes) |
 | **Issue analysis** | 10–20 | No context graph, single LLM call |
 
-> **📸 Screenshot Placeholder:** _Run each scenario and capture timing from terminal output. Save as `docs/screenshots/timing_benchmarks.png`_
+> ** Screenshot Placeholder:** _Run each scenario and capture timing from terminal output. Save as `docs/screenshots/timing_benchmarks.png`_
 
 ### 3.4 Benchmark Commands
 
@@ -291,7 +291,7 @@ SemanticAgent.review(graph)
 - **If probe errors:** Finding with `severity=MEDIUM`, `confidence=0.80`
 - **If probe passes:** No finding generated (silent pass)
 
-> **📸 Screenshot Placeholder:** _Run probes manually and capture output:_
+> ** Screenshot Placeholder:** _Run probes manually and capture output:_
 > ```bash
 > python -c "from qiskitsage.prompts.semantic_checker import run_probe; r=run_probe('bell_transpile'); print(f'Fidelity: {r.fidelity}, Regression: {r.is_regression}')"
 > ```

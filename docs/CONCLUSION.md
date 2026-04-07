@@ -50,14 +50,14 @@ QiskitSage is a **production-grade, context-aware, multi-agent AI code review sy
 
 | Objective | Status | Evidence |
 |---|---|---|
-| Build a context-aware PR review system | ✅ Achieved | 4-stage ContextBuilder produces rich dependency graphs |
-| Support multi-agent parallel execution | ✅ Achieved | Orchestrator uses ThreadPoolExecutor for parallel agent runs |
-| Detect quantum algorithm regressions | ✅ Achieved | SemanticAgent runs 5 real Qiskit circuit probes |
-| Analyze Rust FFI safety | ✅ Achieved | FFIAgent detects unwrap/unsafe/panic patterns |
-| Run fully locally (no cloud APIs) | ✅ Achieved | Ollama backend, zero external LLM calls |
-| Generate GitHub-ready review comments | ✅ Achieved | Renderer produces markdown within 65KB limit |
-| Support issue analysis & code generation | ✅ Achieved | IssueAgent generates code fixes from issue descriptions |
-| Production-grade project structure | ✅ Achieved | Apache 2.0 license, CI/CD, CONTRIBUTING.md, tests, docs |
+| Build a context-aware PR review system |  Achieved | 4-stage ContextBuilder produces rich dependency graphs |
+| Support multi-agent parallel execution |  Achieved | Orchestrator uses ThreadPoolExecutor for parallel agent runs |
+| Detect quantum algorithm regressions |  Achieved | SemanticAgent runs 5 real Qiskit circuit probes |
+| Analyze Rust FFI safety |  Achieved | FFIAgent detects unwrap/unsafe/panic patterns |
+| Run fully locally (no cloud APIs) |  Achieved | Ollama backend, zero external LLM calls |
+| Generate GitHub-ready review comments |  Achieved | Renderer produces markdown within 65KB limit |
+| Support issue analysis & code generation |  Achieved | IssueAgent generates code fixes from issue descriptions |
+| Production-grade project structure |  Achieved | Apache 2.0 license, CI/CD, CONTRIBUTING.md, tests, docs |
 
 ---
 

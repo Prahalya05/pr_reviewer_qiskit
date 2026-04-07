@@ -299,5 +299,5 @@ This project follows the [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.
 - Open an [Issue](https://github.com/YOUR_USERNAME/QiskitSage/issues)
 - Check the [Troubleshooting Guide](docs/TROUBLESHOOTING.md)
 
-Thank you for contributing to QiskitSage! 🙏
+Thank you for contributing to QiskitSage! 
 ]]>

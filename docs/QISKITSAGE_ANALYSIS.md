@@ -3,11 +3,11 @@
 ## Executive Summary
 **Analysis Date:** 2026-03-24  
 **PR Analyzed:** https://github.com/Qiskit/qiskit/pull/15847  
-**Status:** PARTIALLY OPERATIONAL ⚠️
+**Status:** PARTIALLY OPERATIONAL 
 
 ## Analysis Results
 
-### ✅ SUCCESSFUL OPERATIONS
+###  SUCCESSFUL OPERATIONS
 
 1. **Context Graph Construction**
    - Built in 23.73 seconds
@@ -24,7 +24,7 @@
    - All Windows encoding errors fixed
    - No crashes from emoji characters
 
-### ❌ FAILING COMPONENTS
+###  FAILING COMPONENTS
 
 1. **Agent API Response Handling**
    - Syntax Agent: `'str' object has no attribute 'content'`
@@ -37,7 +37,7 @@
    - Main.py still uses old agent execution model
    - No markdown review generated
 
-### 📝 DETAILED LOG
+###  DETAILED LOG
 
 ```
 [INFO] Analyzing PR: https://github.com/Qiskit/qiskit/pull/15847
@@ -109,14 +109,14 @@ markdown = renderer.render(result)
 
 ## Files Status
 
-### ✅ Created/Fixed
+###  Created/Fixed
 - `qiskitsage/orchestrator.py` - Agent coordination (NEW)
 - `qiskitsage/quality_gate.py` - Confidence filtering (NEW)
 - `qiskitsage/renderer.py` - Markdown generation (NEW)
 - `main.py` - Unicode encoding errors (FIXED)
 - `qiskitsage/agents/*.py` - API response edge cases (PARTIAL)
 
-### ❌ Requires Fix
+###  Requires Fix
 - `qiskitsage/agents/syntax_agent.py` - API response handling
 - `qiskitsage/agents/performance_agent.py` - JSON parsing
 - `qiskitsage/agents/ffi_agent.py` - JSON parsing

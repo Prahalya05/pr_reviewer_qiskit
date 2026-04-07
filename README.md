@@ -1,4 +1,4 @@
-<![CDATA[# QiskitSage 🤖🔬
+<![CDATA[# QiskitSage 
 
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-green.svg)](LICENSE)
@@ -22,7 +22,7 @@ QiskitSage analyzes GitHub Pull Requests and Issues using a pipeline of speciali
 
 ---
 
-## ✨ Key Features
+##  Key Features
 
 | Feature | Description |
 |---|---|
@@ -35,7 +35,7 @@ QiskitSage analyzes GitHub Pull Requests and Issues using a pipeline of speciali
 
 ---
 
-## 🚀 Quick Start
+##  Quick Start
 
 ### Prerequisites
 
@@ -77,7 +77,7 @@ python test_ollama.py
 
 ---
 
-## 📖 Usage
+##  Usage
 
 ### CLI — Review a Pull Request
 
@@ -123,7 +123,7 @@ print(Renderer().render(result))
 
 ---
 
-## 🔬 Quantum Fidelity Probes
+##  Quantum Fidelity Probes
 
 The **SemanticAgent (SA-SEM)** executes real quantum circuits to detect transpiler regressions before deploying LLMs:
 
@@ -137,7 +137,7 @@ The **SemanticAgent (SA-SEM)** executes real quantum circuits to detect transpil
 
 ---
 
-## 📈 Results and Benchmark Discussion
+##  Results and Benchmark Discussion
 
 ### Timing Benchmarks
 
@@ -163,7 +163,7 @@ Using **Ollama running `qwen2.5-coder:7b`**:
 
 ---
 
-## 🎓 Conclusion and Lessons Learned
+##  Conclusion and Lessons Learned
 
 QiskitSage is a **production-grade, context-aware, multi-agent AI code review system.** Throughout its design, implementation, and rigorous testing on PRs such as Qiskit (#15847, #12113), the pipeline successfully proved that **domain-specific AI tools (when supported strictly by context-graphs and rule-engine verification) can surpass standard monolithic cloud architectures.**
 
@@ -175,7 +175,7 @@ QiskitSage is a **production-grade, context-aware, multi-agent AI code review sy
 
 ---
 
-## 🤝 Contributing & License
+##  Contributing & License
 
 We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on adding new AI endpoints, new Probes, or refining architecture.
 
