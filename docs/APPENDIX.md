@@ -1,4 +1,4 @@
-<![CDATA[# Appendix: Full Source Code Listings
+# Appendix: Full Source Code Listings
 
 > **QiskitSage v0.1.0** — AI-Powered Multi-Agent Code Review System for Qiskit  
 > **Date:** April 2026
@@ -1181,4 +1181,3 @@ def select_probes_for_graph(graph):
 
     return probes
 ```
-]]>

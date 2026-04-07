@@ -1,4 +1,4 @@
-<![CDATA[# Contributing to QiskitSage
+# Contributing to QiskitSage
 
 Thank you for your interest in contributing to QiskitSage! This document provides guidelines and instructions for contributing to the project.
 
@@ -300,4 +300,3 @@ This project follows the [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.
 - Check the [Troubleshooting Guide](docs/TROUBLESHOOTING.md)
 
 Thank you for contributing to QiskitSage! 
-]]>

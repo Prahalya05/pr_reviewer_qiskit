@@ -1,4 +1,4 @@
-<![CDATA[# Results and Discussion
+# Results and Discussion
 
 > **QiskitSage v0.1.0** — AI-Powered Multi-Agent Code Review System for Qiskit  
 > **Date:** April 2026  
@@ -467,4 +467,3 @@ docs/
 
 *Document generated: April 2026*  
 *QiskitSage v0.1.0 — Local LLM (Ollama) Backend*
-]]>

@@ -1,4 +1,4 @@
-<![CDATA[# Conclusion
+# Conclusion
 
 > **QiskitSage v0.1.0** — AI-Powered Multi-Agent Code Review System for Qiskit  
 > **Date:** April 2026
@@ -174,4 +174,3 @@ The project validates the hypothesis that **domain-specific AI tools, when given
 *QiskitSage v0.1.0 — Context-Aware Multi-Agent AI Code Review for Qiskit*  
 *Licensed under Apache 2.0*  
 *April 2026*
-]]>
