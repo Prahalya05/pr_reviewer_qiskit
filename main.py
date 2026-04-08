@@ -25,6 +25,10 @@ from qiskitsage.models import ReviewResult, Finding
 from qiskitsage.renderer import Renderer
 from qiskitsage.agents.judge_agent import JudgeAgent
 
+import logging
+logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
+logger = logging.getLogger(__name__)
+
 
 def main():
     parser = argparse.ArgumentParser(
@@ -70,7 +74,7 @@ Examples:
     args = parser.parse_args()
 
     if not args.pr and not args.issue:
-        print("[ERROR] Error: Must provide either --pr or --issue.", file=sys.stderr)
+        logger.error("[ERROR] Error: Must provide either --pr or --issue.")
         sys.exit(1)
 
     if args.issue:
@@ -78,52 +82,52 @@ Examples:
         from qiskitsage.agents.issue_agent import IssueAgent
 
         if not args.issue.startswith("https://github.com/") or "/issues/" not in args.issue:
-            print("[ERROR] Error: Invalid Issue URL. Must be a GitHub Issue URL.", file=sys.stderr)
+            logger.error("[ERROR] Error: Invalid Issue URL. Must be a GitHub Issue URL.")
             sys.exit(1)
             
-        print(f"[INFO] Analyzing Issue: {args.issue}")
+        logger.info(f"[INFO] Analyzing Issue: {args.issue}")
         start_time = time.time()
         
         gh = GitHubClient()
         try:
             issue_data = gh.fetch_issue_data(args.issue)
         except Exception as e:
-            print(f"[ERROR] Error fetching issue data: {e}", file=sys.stderr)
+            logger.error(f"[ERROR] Error fetching issue data: {e}")
             sys.exit(1)
             
         agent = IssueAgent()
         if args.verbose:
-            print("   -> Running code generation with Ollama...")
+            logger.info("   -> Running code generation with Ollama...")
             
         findings = agent.review(issue_data)
         
-        print("\n" + "="*80)
-        print(f"[SUMMARY] QISKITSAGE ISSUE ANALYSIS (OLLAMA GENERATED)")
-        print("="*80)
-        print(f"Issue: {args.issue}")
-        print(f"Title: {issue_data['issue_title']}")
-        print(f"Analysis completed in {time.time() - start_time:.1f}s")
-        print(f"Total fixes generated: {len(findings)}")
-        print("\n" + "="*80)
+        logger.info("\n" + "="*80)
+        logger.info(f"[SUMMARY] QISKITSAGE ISSUE ANALYSIS (OLLAMA GENERATED)")
+        logger.info("="*80)
+        logger.info(f"Issue: {args.issue}")
+        logger.info(f"Title: {issue_data['issue_title']}")
+        logger.info(f"Analysis completed in {time.time() - start_time:.1f}s")
+        logger.info(f"Total fixes generated: {len(findings)}")
+        logger.info("\n" + "="*80)
         
         for finding in findings:
-            print(f"\n💡 {finding.category.value} FIX: {finding.title}")
-            print(f"   Target File: {finding.file}")
-            print(f"   Reasoning: {finding.description}")
+            logger.info(f"\n💡 {finding.category.value} FIX: {finding.title}")
+            logger.info(f"   Target File: {finding.file}")
+            logger.info(f"   Reasoning: {finding.description}")
             if finding.suggestion:
-                print(f"\n   --- GENERATED CODE FIX ---\n{finding.suggestion}")
-                print(f"   --------------------------")
+                logger.info(f"\n   --- GENERATED CODE FIX ---\n{finding.suggestion}")
+                logger.info(f"   --------------------------")
                 
         sys.exit(0)
 
     if not args.pr.startswith("https://github.com/") or "/pull/" not in args.pr:
-        print("[ERROR] Error: Invalid PR URL. Must be a GitHub PR URL.", file=sys.stderr)
+        logger.error("[ERROR] Error: Invalid PR URL. Must be a GitHub PR URL.")
         sys.exit(1)
 
     # Build context graph
-    print(f"[INFO] Analyzing PR: {args.pr}")
+    logger.info(f"[INFO] Analyzing PR: {args.pr}")
     if args.verbose:
-        print("   -> Building context graph (Stage 1: Skeleton)...")
+        logger.info("   -> Building context graph (Stage 1: Skeleton)...")
 
     start_time = time.time()
     builder = ContextBuilder()
@@ -131,19 +135,19 @@ Examples:
     try:
         graph = builder.build(args.pr)
     except Exception as e:
-        print(f"[ERROR] Error building context graph: {e}", file=sys.stderr)
+        logger.error(f"[ERROR] Error building context graph: {e}")
         sys.exit(1)
 
     if args.verbose:
-        print(f"   [OK] Context graph built in {graph.build_time_seconds}s")
-        print(f"   [OK] {len(graph.changed_files)} changed files")
-        print(f"   [OK] {len(graph.functions)} functions analyzed")
-        print(f"   [OK] {len(graph.caller_files)} caller files identified")
+        logger.info(f"   [OK] Context graph built in {graph.build_time_seconds}s")
+        logger.info(f"   [OK] {len(graph.changed_files)} changed files")
+        logger.info(f"   [OK] {len(graph.functions)} functions analyzed")
+        logger.info(f"   [OK] {len(graph.caller_files)} caller files identified")
 
         if graph.has_rust_changes:
-            print("   [INFO]  Detected Rust changes (will run FFI agent)")
+            logger.info("   [INFO]  Detected Rust changes (will run FFI agent)")
         if graph.has_transpiler_changes or graph.has_synthesis_changes:
-            print("   [INFO]  Detected critical transpiler/synthesis changes (will run semantic probes)")
+            logger.info("   [INFO]  Detected critical transpiler/synthesis changes (will run semantic probes)")
 
     # Initialize agents
     agents_to_run = []
@@ -162,7 +166,7 @@ Examples:
 
     for agent_name, agent in agents_to_run:
         if args.verbose:
-            print(f"   -> Running {agent_name} agent...")
+            logger.info(f"   -> Running {agent_name} agent...")
 
         try:
             findings = agent.review(graph)
@@ -172,18 +176,18 @@ Examples:
                 high = sum(1 for f in findings if f.severity.value == "HIGH")
                 medium = sum(1 for f in findings if f.severity.value == "MEDIUM")
                 low = sum(1 for f in findings if f.severity.value == "LOW")
-                print(f"     [OK] Found {len(findings)} findings (C:{critical}, H:{high}, M:{medium}, L:{low})")
+                logger.info(f"     [OK] Found {len(findings)} findings (C:{critical}, H:{high}, M:{medium}, L:{low})")
 
             all_findings.extend(findings)
             agent_ids_run.append(agent.agent_id)
 
         except Exception as e:
             if args.verbose:
-                print(f"     [ERROR] Error in {agent_name} agent: {e}")
+                logger.info(f"     [ERROR] Error in {agent_name} agent: {e}")
 
     # Generate report
     if args.verbose:
-        print("   -> Generating final report...")
+        logger.info("   -> Generating final report...")
 
     # Create result object from findings
     critical_count = sum(1 for f in all_findings if f.severity.value == "CRITICAL")
@@ -230,25 +234,25 @@ Examples:
     # Output results
     total_time = time.time() - start_time
 
-    print("\n" + "="*80)
-    print("[SUMMARY] QISKITSAGE REVIEW SUMMARY")
-    print("="*80)
-    print(f"PR: {result.pr_url}")
-    print(f"Review completed in {result.execution_time_seconds:.1f}s (total: {total_time:.1f}s)")
-    print(f"Agents run: {', '.join(result.agents_run)}")
-    print(f"Total findings: {result.total_findings}")
+    logger.info("\n" + "="*80)
+    logger.info("[SUMMARY] QISKITSAGE REVIEW SUMMARY")
+    logger.info("="*80)
+    logger.info(f"PR: {result.pr_url}")
+    logger.info(f"Review completed in {result.execution_time_seconds:.1f}s (total: {total_time:.1f}s)")
+    logger.info(f"Agents run: {', '.join(result.agents_run)}")
+    logger.info(f"Total findings: {result.total_findings}")
 
     if result.critical_count > 0:
-        print(f"🚨 Critical: {result.critical_count}")
+        logger.info(f"🚨 Critical: {result.critical_count}")
     if result.high_count > 0:
-        print(f"⚠️  High: {result.high_count}")
+        logger.info(f"⚠️  High: {result.high_count}")
 
     if result.semantic_regression_detected:
-        print("🐛 REGRESSION DETECTED: Semantic probe failed!")
+        logger.info("🐛 REGRESSION DETECTED: Semantic probe failed!")
     if result.ffi_risk_detected:
-        print("⚠️  FFI RISK: Rust unsafe patterns detected!")
+        logger.info("⚠️  FFI RISK: Rust unsafe patterns detected!")
 
-    print("\n" + "="*80)
+    logger.info("\n" + "="*80)
 
     if args.output == "console":
         # Console-friendly output
@@ -260,22 +264,22 @@ Examples:
                 "LOW": "💡"
             }.get(finding.severity.value, "•")
 
-            print(f"\n{severity_marker} {finding.severity.value}: {finding.title}")
+            logger.info(f"\n{severity_marker} {finding.severity.value}: {finding.title}")
             if finding.line:
-                print(f"   File: {finding.file}:{finding.line}")
+                logger.info(f"   File: {finding.file}:{finding.line}")
             else:
-                print(f"   File: {finding.file}")
-            print(f"   Category: {finding.category.value}")
-            print(f"   Confidence: {finding.confidence:.1%}")
+                logger.info(f"   File: {finding.file}")
+            logger.info(f"   Category: {finding.category.value}")
+            logger.info(f"   Confidence: {finding.confidence:.1%}")
             if finding.description:
-                print(f"   Description: {finding.description}")
+                logger.info(f"   Description: {finding.description}")
             if finding.suggestion:
-                print(f"   Suggestion: {finding.suggestion}")
+                logger.info(f"   Suggestion: {finding.suggestion}")
             if finding.evidence:
-                print(f"   Evidence: {finding.evidence[:100]}{'...' if len(finding.evidence) > 100 else ''}")
+                logger.info(f"   Evidence: {finding.evidence[:100]}{'...' if len(finding.evidence) > 100 else ''}")
     else:
         # Markdown format
-        print(result.comment_markdown)
+        logger.info(result.comment_markdown)
 
     # Exit code based on findings
     if result.critical_count > 0:

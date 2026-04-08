@@ -11,6 +11,9 @@ from .context_graph import ContextGraph
 from .models import Finding, ReviewResult
 from .quality_gate import QualityGate
 
+import logging
+logger = logging.getLogger(__name__)
+
 
 class Orchestrator:
     """Coordinates multiple review agents and compiles their findings."""
@@ -44,7 +47,7 @@ class Orchestrator:
                         all_findings.extend(findings)
                         agent_ids_run.append(agent.agent_id)
                 except Exception as e:
-                    print(f"[{agent.agent_id}] Agent failed: {e}")
+                    logger.info(f"[{agent.agent_id}] Agent failed: {e}")
                     import traceback
                     traceback.print_exc()
 

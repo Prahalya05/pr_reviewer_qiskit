@@ -5,6 +5,9 @@ from ..models import Finding, Severity, Category
 from ..context_graph import ContextGraph
 from ..prompts.performance_prompt import build_perf_user_prompt, PERF_SYSTEM_PROMPT
 
+import logging
+logger = logging.getLogger(__name__)
+
 class PerformanceAgent(BaseAgent):
     agent_id = 'SA-PERF'
 
@@ -46,7 +49,7 @@ class PerformanceAgent(BaseAgent):
                 ))
             return findings
         except json.JSONDecodeError:
-            print(f'[{self.agent_id}] JSON parse error')
+            logger.info(f'[{self.agent_id}] JSON parse error')
             return findings
 
     def _check_cascade_complexity(self, graph: ContextGraph) -> List[Finding]:

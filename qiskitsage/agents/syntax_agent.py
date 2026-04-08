@@ -5,6 +5,9 @@ from ..models import Finding, Severity, Category
 from ..context_graph import ContextGraph
 from ..prompts.syntax_prompt import build_syntax_user_prompt, SYNTAX_SYSTEM_PROMPT
 
+import logging
+logger = logging.getLogger(__name__)
+
 class SyntaxAgent(BaseAgent):
     agent_id = 'SA-SYN'
 
@@ -26,7 +29,7 @@ class SyntaxAgent(BaseAgent):
             else:
                 content = content.split('```')[1].split('```')[0].strip()
         
-        # print("DEBUG SYNTAX CONTENT:", content)
+        # logger.info("DEBUG SYNTAX CONTENT:", content)
 
         try:
             data = json.loads(content.strip())
@@ -46,5 +49,5 @@ class SyntaxAgent(BaseAgent):
                 ))
             return findings
         except json.JSONDecodeError:
-            print(f'[{self.agent_id}] JSON parse error')
+            logger.info(f'[{self.agent_id}] JSON parse error')
             return []

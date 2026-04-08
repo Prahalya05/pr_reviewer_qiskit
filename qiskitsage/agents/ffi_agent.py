@@ -6,6 +6,9 @@ from ..context_graph import ContextGraph
 from ..rust_analyser import RustAnalyser
 from ..prompts.ffi_prompt import build_ffi_user_prompt, FFI_SYSTEM_PROMPT
 
+import logging
+logger = logging.getLogger(__name__)
+
 class FFIAgent(BaseAgent):
     agent_id = 'SA-FFI'
 
@@ -107,5 +110,5 @@ class FFIAgent(BaseAgent):
                 ))
             return findings
         except json.JSONDecodeError:
-            print(f'[{self.agent_id}] JSON parse error')
+            logger.info(f'[{self.agent_id}] JSON parse error')
             return findings

@@ -17,27 +17,31 @@ from qiskitsage.agents.judge_agent import JudgeAgent
 from qiskitsage.models import ReviewResult, Finding
 from qiskitsage.context_graph import ContextGraph
 
+import logging
+logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
+logger = logging.getLogger(__name__)
+
 
 def example_1_basic_pr_review():
     """Example 1: Basic PR review with all agents."""
-    print("Example 1: Basic PR Review")
-    print("=" * 80)
+    logger.info("Example 1: Basic PR Review")
+    logger.info("=" * 80)
 
     # PR URL to analyze
     pr_url = "https://github.com/Qiskit/qiskit/pull/12345"  # Replace with actual PR
 
     # 1. Build context graph
-    print(f"Building context graph for {pr_url}...")
+    logger.info(f"Building context graph for {pr_url}...")
     builder = ContextBuilder()
     graph = builder.build(pr_url)
 
-    print(f"✓ Built graph with {len(graph.changed_files)} changed files")
-    print(f"✓ Analyzed {len(graph.functions)} functions")
-    print(f"✓ Context size: {graph.context_size_chars} chars")
-    print(f"✓ Build time: {graph.build_time_seconds}s")
+    logger.info(f"✓ Built graph with {len(graph.changed_files)} changed files")
+    logger.info(f"✓ Analyzed {len(graph.functions)} functions")
+    logger.info(f"✓ Context size: {graph.context_size_chars} chars")
+    logger.info(f"✓ Build time: {graph.build_time_seconds}s")
 
     # 2. Run all agents
-    print("\nRunning review agents...")
+    logger.info("\nRunning review agents...")
     findings: List[Finding] = []
 
     for agent_name, agent in [
@@ -46,55 +50,55 @@ def example_1_basic_pr_review():
         ("Semantic", SemanticAgent()),
         ("FFI Safety", FFIAgent())
     ]:
-        print(f"  → {agent_name} agent...")
+        logger.info(f"  → {agent_name} agent...")
         agent_findings = agent.review(graph)
         findings.extend(agent_findings)
-        print(f"    Found {len(agent_findings)} findings")
+        logger.info(f"    Found {len(agent_findings)} findings")
 
     # 3. Generate report
-    print("\nGenerating final report...")
+    logger.info("\nGenerating final report...")
     judge = JudgeAgent()
     result = judge.generate_report(graph, findings)
 
     # 4. Display results
-    print("\n" + "=" * 80)
-    print("REVIEW RESULTS")
-    print("=" * 80)
-    print(f"PR: {result.pr_url}")
-    print(f"Total findings: {result.total_findings}")
-    print(f"Critical: {result.critical_count}")
-    print(f"High: {result.high_count}")
-    print(f"Execution time: {result.execution_time_seconds:.1f}s")
+    logger.info("\n" + "=" * 80)
+    logger.info("REVIEW RESULTS")
+    logger.info("=" * 80)
+    logger.info(f"PR: {result.pr_url}")
+    logger.info(f"Total findings: {result.total_findings}")
+    logger.info(f"Critical: {result.critical_count}")
+    logger.info(f"High: {result.high_count}")
+    logger.info(f"Execution time: {result.execution_time_seconds:.1f}s")
 
     if result.semantic_regression_detected:
-        print("🐛 SEMANTIC REGRESSION DETECTED")
+        logger.info("🐛 SEMANTIC REGRESSION DETECTED")
     if result.ffi_risk_detected:
-        print("⚠️  FFI RISK DETECTED")
+        logger.info("⚠️  FFI RISK DETECTED")
 
     # 5. Show findings by severity
-    print("\nFindings by Severity:")
+    logger.info("\nFindings by Severity:")
     for severity in ["CRITICAL", "HIGH", "MEDIUM", "LOW"]:
         severity_findings = [
             f for f in result.findings
             if f.severity.value == severity
         ]
         if severity_findings:
-            print(f"\n{severity} ({len(severity_findings)}):")
+            logger.info(f"\n{severity} ({len(severity_findings)}):")
             for finding in severity_findings:
-                print(f"  • {finding.title} ({finding.file}:{finding.line})")
+                logger.info(f"  • {finding.title} ({finding.file}:{finding.line})")
 
     # 6. Save markdown report
     with open("review_report.md", "w") as f:
         f.write(result.comment_markdown)
-    print("\n✓ Saved detailed report to review_report.md")
+    logger.info("\n✓ Saved detailed report to review_report.md")
 
     return result
 
 
 def example_2_specific_agents_only():
     """Example 2: Run only specific agents."""
-    print("\n\nExample 2: Specific Agents Only")
-    print("=" * 80)
+    logger.info("\n\nExample 2: Specific Agents Only")
+    logger.info("=" * 80)
 
     pr_url = "https://github.com/Qiskit/qiskit/pull/67890"  # Replace with actual PR
 
@@ -102,7 +106,7 @@ def example_2_specific_agents_only():
     graph = builder.build(pr_url)
 
     # Only run syntax and performance agents
-    print("Running only Syntax and Performance agents...")
+    logger.info("Running only Syntax and Performance agents...")
     findings = []
 
     syntax_agent = SyntaxAgent()
@@ -114,14 +118,14 @@ def example_2_specific_agents_only():
     judge = JudgeAgent()
     result = judge.generate_report(graph, findings)
 
-    print(f"Total findings with 2 agents: {result.total_findings}")
+    logger.info(f"Total findings with 2 agents: {result.total_findings}")
     return result
 
 
 def example_3_filter_by_category():
     """Example 3: Filter findings by category."""
-    print("\n\nExample 3: Filter by Category")
-    print("=" * 80)
+    logger.info("\n\nExample 3: Filter by Category")
+    logger.info("=" * 80)
 
     # Get a sample PR review
     result = example_1_basic_pr_review()
@@ -132,20 +136,20 @@ def example_3_filter_by_category():
     for finding in result.findings:
         by_category[finding.category.value].append(finding)
 
-    print("\nFindings by Category:")
+    logger.info("\nFindings by Category:")
     for category, findings in by_category.items():
-        print(f"\n{category} ({len(findings)} findings):")
+        logger.info(f"\n{category} ({len(findings)} findings):")
         for finding in findings:
             severity_marker = {"CRITICAL": "🚨", "HIGH": "⚠️", "MEDIUM": "🔍", "LOW": "💡"}.get(
                 finding.severity.value, "•"
             )
-            print(f"  {severity_marker} {finding.title} ({finding.file}:{finding.line})")
+            logger.info(f"  {severity_marker} {finding.title} ({finding.file}:{finding.line})")
 
 
 def example_4_react_to_semantic_regression():
     """Example 4: Special handling of semantic regressions."""
-    print("\n\nExample 4: Handling Semantic Regressions")
-    print("=" * 80)
+    logger.info("\n\nExample 4: Handling Semantic Regressions")
+    logger.info("=" * 80)
 
     pr_url = "https://github.com/Qiskit/qiskit/pull/11111"  # Replace with actual PR
 
@@ -164,25 +168,25 @@ def example_4_react_to_semantic_regression():
     ]
 
     if regression_findings:
-        print("🐛 REGRESSION DETECTED!")
-        print("Affected circuits:")
+        logger.info("🐛 REGRESSION DETECTED!")
+        logger.info("Affected circuits:")
         for finding in regression_findings:
-            print(f"  • {finding.probe_circuit}")
-            print(f"    Fidelity before: {finding.fidelity_before:.4f}")
-            print(f"    Fidelity after:  {finding.fidelity_after:.4f}")
+            logger.info(f"  • {finding.probe_circuit}")
+            logger.info(f"    Fidelity before: {finding.fidelity_before:.4f}")
+            logger.info(f"    Fidelity after:  {finding.fidelity_after:.4f}")
 
         # Fail fast - don't run other agents if regression found
-        print("\nAborting review due to semantic regression.")
+        logger.info("\nAborting review due to semantic regression.")
         sys.exit(1)
 
     # If no regression, continue with other agents
-    print("✓ No semantic regression detected, continuing review...")
+    logger.info("✓ No semantic regression detected, continuing review...")
 
 
 def example_5_process_multiple_prs():
     """Example 5: Process multiple PRs in batch."""
-    print("\n\nExample 5: Batch Processing Multiple PRs")
-    print("=" * 80)
+    logger.info("\n\nExample 5: Batch Processing Multiple PRs")
+    logger.info("=" * 80)
 
     pr_urls = [
         "https://github.com/Qiskit/qiskit/pull/12345",
@@ -192,7 +196,7 @@ def example_5_process_multiple_prs():
 
     results = []
     for pr_url in pr_urls:
-        print(f"\nProcessing {pr_url}...")
+        logger.info(f"\nProcessing {pr_url}...")
         try:
             builder = ContextBuilder()
             graph = builder.build(pr_url)
@@ -205,36 +209,36 @@ def example_5_process_multiple_prs():
             result = judge.generate_report(graph, findings)
             results.append(result)
 
-            print(f"  ✓ Found {result.total_findings} findings")
+            logger.info(f"  ✓ Found {result.total_findings} findings")
 
             # Save individual report
             filename = f"review_{result.pr_number}.md"
             with open(filename, "w") as f:
                 f.write(result.comment_markdown)
-            print(f"  ✓ Saved report to {filename}")
+            logger.info(f"  ✓ Saved report to {filename}")
 
         except Exception as e:
-            print(f"  ✗ Error processing PR: {e}")
+            logger.info(f"  ✗ Error processing PR: {e}")
 
     # Summary
-    print("\n" + "=" * 80)
-    print("BATCH SUMMARY")
-    print("=" * 80)
+    logger.info("\n" + "=" * 80)
+    logger.info("BATCH SUMMARY")
+    logger.info("=" * 80)
     total_findings = sum(r.total_findings for r in results)
     total_critical = sum(r.critical_count for r in results)
 
-    print(f"PRs processed: {len(results)}")
-    print(f"Total findings: {total_findings}")
-    print(f"Total critical: {total_critical}")
+    logger.info(f"PRs processed: {len(results)}")
+    logger.info(f"Total findings: {total_findings}")
+    logger.info(f"Total critical: {total_critical}")
 
     if total_critical > 0:
-        print("\n⚠️  Some PRs require attention!")
+        logger.info("\n⚠️  Some PRs require attention!")
 
 
 def example_6_check_for_rust_ffi():
     """Example 6: Detect Rust FFI changes."""
-    print("\n\nExample 6: FFI Safety Check")
-    print("=" * 80)
+    logger.info("\n\nExample 6: FFI Safety Check")
+    logger.info("=" * 80)
 
     pr_url = "https://github.com/Qiskit/qiskit/pull/22222"  # Replace with actual PR
 
@@ -243,7 +247,7 @@ def example_6_check_for_rust_ffi():
 
     # Check if there are Rust changes
     if graph.has_rust_changes:
-        print("ℹ️  Detected Rust changes - running FFI safety agent...")
+        logger.info("ℹ️  Detected Rust changes - running FFI safety agent...")
         ffi_agent = FFIAgent()
         findings = ffi_agent.review(graph)
 
@@ -251,73 +255,73 @@ def example_6_check_for_rust_ffi():
         memory_findings = [f for f in findings if hasattr(f, 'rust_severity') and f.rust_severity == 'MEMORY']
 
         if panic_findings:
-            print("🚨 PANIC RISK DETECTED:")
+            logger.info("🚨 PANIC RISK DETECTED:")
             for finding in panic_findings:
-                print(f"  • {finding.title} ({finding.file}:{finding.line})")
+                logger.info(f"  • {finding.title} ({finding.file}:{finding.line})")
 
         if memory_findings:
-            print("⚠️  MEMORY SAFETY ISSUES:")
+            logger.info("⚠️  MEMORY SAFETY ISSUES:")
             for finding in memory_findings:
-                print(f"  • {finding.title} ({finding.file}:{finding.line})")
+                logger.info(f"  • {finding.title} ({finding.file}:{finding.line})")
 
         if not panic_findings and not memory_findings:
-            print("✓ No critical FFI safety issues found")
+            logger.info("✓ No critical FFI safety issues found")
 
     else:
-        print("ℹ️  No Rust changes detected - skipping FFI agent")
+        logger.info("ℹ️  No Rust changes detected - skipping FFI agent")
 
 
 def example_7_custom_agent_filter():
     """Example 7: Custom logic to decide which agents to run."""
-    print("\n\nExample 7: Dynamic Agent Selection")
-    print("=" * 80)
+    logger.info("\n\nExample 7: Dynamic Agent Selection")
+    logger.info("=" * 80)
 
     pr_url = "https://github.com/Qiskit/qiskit/pull/33333"  # Replace with actual PR
 
     builder = ContextBuilder()
     graph = builder.build(pr_url)
 
-    print("Analyzing PR characteristics...")
+    logger.info("Analyzing PR characteristics...")
 
     # Decide which agents to run based on PR characteristics
     agents_to_run = []
 
     # Always run syntax agent
     agents_to_run.append(("Syntax", SyntaxAgent()))
-    print("  ✓ Syntax agent (always)")
+    logger.info("  ✓ Syntax agent (always)")
 
     # Run performance agent if transpiler/synthesis changes
     if graph.has_transpiler_changes or graph.has_synthesis_changes:
         agents_to_run.append(("Performance", PerformanceAgent()))
-        print("  ✓ Performance agent (transpiler changes detected)")
+        logger.info("  ✓ Performance agent (transpiler changes detected)")
 
     # Run semantic agent if quantum info changes
     if graph.has_quantum_info_changes:
         agents_to_run.append(("Semantic", SemanticAgent()))
-        print("  ✓ Semantic agent (quantum info changes detected)")
+        logger.info("  ✓ Semantic agent (quantum info changes detected)")
 
     # Run FFI agent if Rust changes
     if graph.has_rust_changes:
         agents_to_run.append(("FFI", FFIAgent()))
-        print("  ✓ FFI agent (Rust changes detected)")
+        logger.info("  ✓ FFI agent (Rust changes detected)")
 
     # Run selected agents
     findings = []
     for agent_name, agent in agents_to_run:
-        print(f"\nRunning {agent_name}...")
+        logger.info(f"\nRunning {agent_name}...")
         findings.extend(agent.review(graph))
 
     # Generate report
     judge = JudgeAgent()
     result = judge.generate_report(graph, findings)
 
-    print(f"\n✓ Review complete: {result.total_findings} findings")
+    logger.info(f"\n✓ Review complete: {result.total_findings} findings")
 
 
 def example_8_output_json_api():
     """Example 8: Return results as JSON for API usage."""
-    print("\n\nExample 8: JSON API Output")
-    print("=" * 80)
+    logger.info("\n\nExample 8: JSON API Output")
+    logger.info("=" * 80)
 
     import json
 
@@ -362,45 +366,45 @@ def example_8_output_json_api():
         ]
     }
 
-    print(json.dumps(json_result, indent=2))
+    logger.info(json.dumps(json_result, indent=2))
 
     # Save to file
     with open("review_result.json", "w") as f:
         json.dump(json_result, f, indent=2)
-    print("\n✓ Saved JSON output to review_result.json")
+    logger.info("\n✓ Saved JSON output to review_result.json")
 
 
 def main():
     """Run all examples."""
-    print("QiskitSage Usage Examples")
-    print("=" * 80)
-    print("This file demonstrates various ways to use QiskitSage programmatically.")
-    print("\nIndividual examples can be run by calling their functions.")
-    print("\nAvailable examples:")
-    print("  1. example_1_basic_pr_review() - Basic PR review")
-    print("  2. example_2_specific_agents_only() - Run specific agents")
-    print("  3. example_3_filter_by_category() - Filter findings")
-    print("  4. example_4_react_to_semantic_regression() - Error on regression")
-    print("  5. example_5_process_multiple_prs() - Batch processing")
-    print("  6. example_6_check_for_rust_ffi() - FFI safety")
-    print("  7. example_7_custom_agent_filter() - Dynamic agent selection")
-    print("  8. example_8_output_json_api() - JSON API output")
+    logger.info("QiskitSage Usage Examples")
+    logger.info("=" * 80)
+    logger.info("This file demonstrates various ways to use QiskitSage programmatically.")
+    logger.info("\nIndividual examples can be run by calling their functions.")
+    logger.info("\nAvailable examples:")
+    logger.info("  1. example_1_basic_pr_review() - Basic PR review")
+    logger.info("  2. example_2_specific_agents_only() - Run specific agents")
+    logger.info("  3. example_3_filter_by_category() - Filter findings")
+    logger.info("  4. example_4_react_to_semantic_regression() - Error on regression")
+    logger.info("  5. example_5_process_multiple_prs() - Batch processing")
+    logger.info("  6. example_6_check_for_rust_ffi() - FFI safety")
+    logger.info("  7. example_7_custom_agent_filter() - Dynamic agent selection")
+    logger.info("  8. example_8_output_json_api() - JSON API output")
 
-    print("\n\n" + "=" * 80)
-    print("RUNNING EXAMPLE 1: Basic PR Review")
-    print("=" * 80)
+    logger.info("\n\n" + "=" * 80)
+    logger.info("RUNNING EXAMPLE 1: Basic PR Review")
+    logger.info("=" * 80)
 
     # For demonstration, we're using placeholder PR URLs
     # In production, replace these with actual PR URLs from Qiskit repo
-    print("⚠️  Note: Replace placeholder PR URLs (12345, 67890, etc.) with actual PR URLs")
-    print("=" * 80 + "\n")
+    logger.info("⚠️  Note: Replace placeholder PR URLs (12345, 67890, etc.) with actual PR URLs")
+    logger.info("=" * 80 + "\n")
 
     # Run the first example
     try:
         example_1_basic_pr_review()
     except Exception as e:
-        print(f"\n❌ Example failed (likely due to placeholder URL): {e}")
-        print("\nTo run examples, replace placeholder PR URLs with actual GitHub PR URLs.")
+        logger.info(f"\n❌ Example failed (likely due to placeholder URL): {e}")
+        logger.info("\nTo run examples, replace placeholder PR URLs with actual GitHub PR URLs.")
 
 
 if __name__ == "__main__":

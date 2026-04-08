@@ -3,6 +3,9 @@ from typing import List
 from ..context_graph import ContextGraph
 from ..models import Finding
 
+import logging
+logger = logging.getLogger(__name__)
+
 class BaseAgent(ABC):
     agent_id: str = 'BASE'
 
@@ -34,7 +37,7 @@ class BaseAgent(ABC):
             }
         )
         content = resp.get('message', {}).get('content', '')
-        # print(f"DEBUG LLM OUTPUT: {content}")
+        # logger.info(f"DEBUG LLM OUTPUT: {content}")
         return content
 
     @abstractmethod
@@ -46,5 +49,5 @@ class BaseAgent(ABC):
         try:
             return self.review(graph)
         except Exception as e:
-            print(f'[{self.agent_id}] Error: {e}')
+            logger.info(f'[{self.agent_id}] Error: {e}')
             return []

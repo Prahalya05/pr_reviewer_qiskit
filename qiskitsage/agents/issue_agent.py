@@ -3,6 +3,9 @@ from typing import List
 from .base_agent import BaseAgent
 from ..models import Finding, Severity, Category
 
+import logging
+logger = logging.getLogger(__name__)
+
 ISSUE_SYSTEM_PROMPT = """You are an expert Qiskit developer and Python software engineer.
 You are analyzing a GitHub Issue report and must generate the exact Python code needed to fix the issue.
 
@@ -67,5 +70,5 @@ class IssueAgent(BaseAgent):
                 ))
             return findings
         except json.JSONDecodeError:
-            print(f'[{self.agent_id}] JSON parse error in IssueAgent')
+            logger.info(f'[{self.agent_id}] JSON parse error in IssueAgent')
             return []
